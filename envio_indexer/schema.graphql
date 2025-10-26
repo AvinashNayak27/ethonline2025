@@ -38,9 +38,18 @@ type Escrow_IntentCancelled {
 type Escrow_PaymentClaimed {
   id: ID!
   buyer: String!
+  depositId: BigInt!            # Added depositId
   usdcAmount: BigInt!
   upiTransactionId: String!
   transactionHash: String!
   timestamp: BigInt!
 }
 
+type Escrow_ClaimedIntent {       # New event type
+  id: ID!
+  buyer: String!
+  depositId: BigInt!
+  amount: BigInt!
+  transactionHash: String!
+  timestamp: BigInt!
+}

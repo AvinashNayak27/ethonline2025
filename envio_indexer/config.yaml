@@ -2,11 +2,11 @@
 name: envio_indexer
 networks:
   - id: 42161
-    start_block: 0
+    start_block: 393625836
     contracts:
       - name: Escrow
         address:
-          - 0x6fF44a88AB945E7742bfE16d54CEDa4061462f48
+          - 0x886495c7c0502d948ad4cb3764aeae2293664bb8
         handler: src/EventHandlers.ts
         events:
           - event: BuyerIntent(uint256 depositId, address buyer, uint256 amount)
@@ -25,7 +25,11 @@ networks:
             field_selection:
               transaction_fields:
                 - "hash"
-          - event: PaymentClaimed(address buyer, uint256 usdcAmount, string upiTransactionId)
+          - event: PaymentClaimed(address buyer, uint256 depositId, uint256 usdcAmount, string upiTransactionId)
+            field_selection:
+              transaction_fields:
+                - "hash"
+          - event: ClaimedIntent(address buyer, uint256 depositId, uint256 amount)
             field_selection:
               transaction_fields:
                 - "hash"
