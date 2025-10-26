@@ -16,6 +16,8 @@ Escrow.BuyerIntent.handler(async ({ event, context }) => {
     depositId: event.params.depositId,
     buyer: event.params.buyer,
     amount: event.params.amount,
+    transactionHash: event.transaction.hash,
+    timestamp: BigInt(event.block.timestamp),
   };
 
   context.Escrow_BuyerIntent.set(entity);
@@ -29,6 +31,8 @@ Escrow.FundsDeposited.handler(async ({ event, context }) => {
     upiId: event.params.upiId,
     remainingFunds: event.params.remainingFunds,
     minimumAmount: event.params.minimumAmount,
+    transactionHash: event.transaction.hash,
+    timestamp: BigInt(event.block.timestamp),
   };
 
   context.Escrow_FundsDeposited.set(entity);
@@ -40,6 +44,8 @@ Escrow.FundsWithdrawn.handler(async ({ event, context }) => {
     seller: event.params.seller,
     depositId: event.params.depositId,
     amount: event.params.amount,
+    transactionHash: event.transaction.hash,
+    timestamp: BigInt(event.block.timestamp),
   };
 
   context.Escrow_FundsWithdrawn.set(entity);
@@ -50,6 +56,8 @@ Escrow.IntentCancelled.handler(async ({ event, context }) => {
     id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
     buyer: event.params.buyer,
     depositId: event.params.depositId,
+    transactionHash: event.transaction.hash,
+    timestamp: BigInt(event.block.timestamp),
   };
 
   context.Escrow_IntentCancelled.set(entity);
@@ -61,6 +69,8 @@ Escrow.PaymentClaimed.handler(async ({ event, context }) => {
     buyer: event.params.buyer,
     usdcAmount: event.params.usdcAmount,
     upiTransactionId: event.params.upiTransactionId,
+    transactionHash: event.transaction.hash,
+    timestamp: BigInt(event.block.timestamp),
   };
 
   context.Escrow_PaymentClaimed.set(entity);

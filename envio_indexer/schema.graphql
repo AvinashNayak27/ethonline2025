@@ -3,6 +3,8 @@ type Escrow_BuyerIntent {
   depositId: BigInt!
   buyer: String!
   amount: BigInt!
+  transactionHash: String!
+  timestamp: BigInt!
 }
 
 type Escrow_FundsDeposited {
@@ -12,6 +14,8 @@ type Escrow_FundsDeposited {
   upiId: String!
   remainingFunds: BigInt!
   minimumAmount: BigInt!
+  transactionHash: String!
+  timestamp: BigInt!
 }
 
 type Escrow_FundsWithdrawn {
@@ -19,12 +23,16 @@ type Escrow_FundsWithdrawn {
   seller: String!
   depositId: BigInt!
   amount: BigInt!
+  transactionHash: String!
+  timestamp: BigInt!
 }
 
 type Escrow_IntentCancelled {
   id: ID!
   buyer: String!
   depositId: BigInt!
+  transactionHash: String!
+  timestamp: BigInt!
 }
 
 type Escrow_PaymentClaimed {
@@ -32,5 +40,7 @@ type Escrow_PaymentClaimed {
   buyer: String!
   usdcAmount: BigInt!
   upiTransactionId: String!
+  transactionHash: String!
+  timestamp: BigInt!
 }
 
