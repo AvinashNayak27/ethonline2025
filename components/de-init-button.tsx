@@ -11,5 +11,5 @@ export default function DeinitButton({
     onDone?.();
     alert('Nexus de-initialized');
   };
-  return <button className={className} onClick={onClick} disabled={!isInitialized()}>De-initialize</button>;
+  return <button className={className ?? 'btn-coffee'} onClick={onClick} disabled={!isInitialized()}>De-initialize</button>;
 }

@@ -36,7 +36,7 @@ export default function ConnectWalletButton({ className }: { className?: string 
             {(() => {
               if (!connected) {
                 return (
-                  <button className={className} onClick={openConnectModal} type="button">
+                  <button className={className ?? 'btn-coffee'} onClick={openConnectModal} type="button">
                     Connect Wallet
                   </button>
                 );
@@ -44,7 +44,7 @@ export default function ConnectWalletButton({ className }: { className?: string 
  
               if (chain.unsupported) {
                 return (
-                  <button className={className} onClick={openChainModal} type="button">
+                  <button className={className ?? 'btn-coffee'} onClick={openChainModal} type="button">
                     Wrong network
                   </button>
                 );
@@ -53,7 +53,7 @@ export default function ConnectWalletButton({ className }: { className?: string 
               return (
                 <div style={{ display: 'flex', gap: 12 }}>
                   <button
-                    className={className}
+                    className={className ?? 'btn-coffee'}
                     onClick={openChainModal}
                     style={{ display: 'flex', alignItems: 'center' }}
                     type="button"
@@ -81,7 +81,7 @@ export default function ConnectWalletButton({ className }: { className?: string 
                     {chain.name}
                   </button>
  
-                  <button className={className} onClick={openAccountModal} type="button">
+                  <button className={className ?? 'btn-coffee'} onClick={openAccountModal} type="button">
                     {account.displayName}
                     {account.displayBalance
                       ? ` (${account.displayBalance})`

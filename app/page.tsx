@@ -15,35 +15,42 @@ export default function Page() {
   const [initialized, setInitialized] = useState(isInitialized());
   const [balances, setBalances] = useState<any>(null);
  
-  const btn =
-    'px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 ' +
-    'disabled:opacity-50 disabled:cursor-not-allowed';
+  const btn = 'btn-coffee';
  
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
+    <main className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-2xl card-coffee p-6">
+        <div className="mb-4">
+          <h1 className="text-2xl font-semibold" style={{ color: 'var(--coffee-espresso)' }}>Avail Nexus Demo</h1>
+          <p className="text-sm" style={{ color: 'var(--coffee-muted)' }}>Coffee-themed light UI</p>
+        </div>
+
+        <div className="flex flex-col items-stretch gap-3">
         <ConnectWalletButton className={btn} />
         <InitButton className={btn} onReady={() => setInitialized(true)} />
         <FetchUnifiedBalanceButton className={btn} onResult={(r) => setBalances(r)} />
         <VerifyOffchainPaymentButton className={btn} />
-        
-        <div className="border-t pt-4 mt-4 w-full">
-          <h3 className="text-lg font-semibold mb-2 text-center">Nexus Core Implementation</h3>
-          <BridgeAndExecuteButtonComponent className={btn} />
+          
+          <div className="pt-4 mt-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+            <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--coffee-espresso)' }}>Nexus Core Implementation</h3>
+            <BridgeAndExecuteButtonComponent className={btn} />
+          </div>
+          
+          <DeinitButton className={btn} onDone={() => { setInitialized(false); setBalances(null); }} />
+
+          <div className="grid grid-cols-1 gap-2 text-sm mt-2">
+            <div className="rounded-md p-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+              <b>Wallet Status:</b> {isConnected ? 'Connected' : 'Not connected'}
+            </div>
+            <div className="rounded-md p-3" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+              <b>Nexus SDK Initialization Status:</b> {initialized ? 'Initialized' : 'Not initialized'}
+            </div>
+          </div>
+
+          {balances && (
+            <pre className="whitespace-pre-wrap mt-3 rounded-md p-3 overflow-x-auto" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>{JSON.stringify(balances, null, 2)}</pre>
+          )}
         </div>
-        
-        <DeinitButton className={btn} onDone={() => { setInitialized(false); setBalances(null); }} />
- 
-        <div className="mt-2">
-          <b>Wallet Status:</b> {isConnected ? 'Connected' : 'Not connected'}
-        </div>
-        <div className="mt-2">
-          <b>Nexus SDK Initialization Status:</b> {initialized ? 'Initialized' : 'Not initialized'}
-        </div>
- 
-        {balances && (
-          <pre className="whitespace-pre-wrap">{JSON.stringify(balances, null, 2)}</pre>
-        )}
       </div>
     </main>
   );

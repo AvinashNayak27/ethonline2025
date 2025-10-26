@@ -12,5 +12,5 @@ export default function FetchUnifiedBalanceButton({
     onResult?.(res);
     console.log(res);
   };
-  return <button className={className} onClick={onClick} disabled={!isInitialized()}>Fetch Unified Balances</button>;
+  return <button className={className ?? 'btn-coffee'} onClick={onClick} disabled={!isInitialized()}>Fetch Unified Balances</button>;
 }

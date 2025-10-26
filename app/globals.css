@@ -1,26 +1,67 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Coffee light palette */
+  --coffee-cream: #f7f3ee;      /* page background */
+  --coffee-foam: #efe7df;       /* subtle surfaces */
+  --coffee-latte: #e6d8c9;      /* cards/borders */
+  --coffee-caramel: #c69c6d;    /* accents */
+  --coffee-mocha: #8b6b56;      /* primary brand */
+  --coffee-espresso: #4b382a;   /* headings */
+  --coffee-bean: #2f241b;       /* strong text */
+  --coffee-text: #3a2c22;       /* body text */
+  --coffee-muted: #6b5a4c;      /* muted text */
+  --coffee-ring: rgba(139,107,86,0.35);
+
+  --background: var(--coffee-cream);
+  --foreground: var(--coffee-text);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--coffee-foam);
+  --color-card: var(--coffee-latte);
+  --color-primary: var(--coffee-mocha);
+  --color-primary-foreground: #ffffff;
+  --color-accent: var(--coffee-caramel);
+  --color-accent-foreground: #ffffff;
+  --color-muted: var(--coffee-muted);
+  --color-border: var(--coffee-latte);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Force light mode only */
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Shared UI primitives */
+.btn-coffee {
+  @apply inline-flex items-center justify-center rounded-md px-4 py-2 font-medium transition-colors;
+  background-color: var(--coffee-mocha);
+  color: var(--color-primary-foreground);
+}
+.btn-coffee:hover { background-color: #7b5f4c; }
+.btn-coffee:disabled { opacity: .5; cursor: not-allowed; }
+
+.btn-outline-coffee {
+  @apply inline-flex items-center justify-center rounded-md px-4 py-2 font-medium transition-colors border;
+  border-color: var(--color-border);
+  color: var(--coffee-espresso);
+  background-color: #ffffff00;
+}
+.btn-outline-coffee:hover { background-color: var(--coffee-foam); }
+
+.card-coffee {
+  @apply rounded-xl shadow-sm;
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+}
+
+.modal-backdrop { background: rgba(47,36,27,0.35); backdrop-filter: blur(2px); }
+.ring-coffee { box-shadow: 0 0 0 3px var(--coffee-ring); }

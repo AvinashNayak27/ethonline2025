@@ -23,5 +23,5 @@ export default function InitButton({
       alert(e?.message ?? 'Init failed');
     }
   };
-  return <button className={className} onClick={onClick} disabled={isInitialized()}>Initialize Nexus</button>;
+  return <button className={className ?? 'btn-coffee'} onClick={onClick} disabled={isInitialized()}>Initialize Nexus</button>;
 }
