@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Escrow + Offchain Payment System (Arbitrum Mainnet)
 
-## Getting Started
+This project implements a simple escrow and offchain payment verification system using Solidity smart contracts and EIP-712 signature verification.
 
-First, run the development server:
+## 📜 Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The system consists of three main components:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. **Escrow Contract** — Handles token locking, releasing, and withdrawal logic using USDC.
+2. **USDC Token Contract** — The ERC20 stablecoin used for transactions.
+3. **Offchain Payment Verifier** — Verifies signed offchain payment claims using ECDSA or EIP-712.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔗 Deployed Contracts (Arbitrum One)
 
-## Learn More
+| Contract | Description | Address |
+|-----------|--------------|----------|
+| **Escrow** | Core contract for locking and releasing funds | [`0x6fF44A88Ab945e7742BfE16D54ceda4061462F48`](https://arbiscan.io/address/0x6ff44a88ab945e7742bfe16d54ceda4061462f48#code) |
+| **USDC (Arbitrum)** | ERC20 token used for escrow payments | [`0xAf88d065E77C8Cc2239327C5EDb3A432268E5831`](https://arbiscan.io/address/0xaf88d065e77c8cc2239327c5edb3a432268e5831#writeProxyContract) |
+| **Offchain Payment Verifier** | Verifies signed offchain payment claims | [`0x5B866B6655234b3B6f9B3bD86F068A99622F5919`](https://arbiscan.io/address/0x5b866b6655234b3b6f9b3bd86f068a99622f5919) |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧩 How It Works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 1. **Escrow**
+- Users deposit USDC into the Escrow contract.
+- Funds are locked until certain conditions or signatures are verified.
+- The receiver (or an authorized address) can withdraw after validation.
 
-## Deploy on Vercel
+### 2. **Offchain Payment Verification**
+- A signer (backend) signs structured payment data (e.g., status, amount, UPI ID, etc.).
+- The signature is verified on-chain by the verifier contract.
+- Prevents replay attacks and ensures payment authenticity.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. **USDC**
+- Standard ERC20 stablecoin on Arbitrum.
+- Used for value transfer in escrow operations.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
