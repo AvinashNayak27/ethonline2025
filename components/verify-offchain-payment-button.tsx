@@ -1,6 +1,60 @@
 "use client";
 
 import { useState } from "react";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { parseUnits } from "viem";
+
+/**
+ * VerifyOffchainPaymentButton Component
+ * 
+ * This component provides a complete flow for:
+ * 1. Verifying offchain payments through TEE (Trusted Execution Environment)
+ * 2. Claiming USDC funds on-chain using the verified payment data
+ * 
+ * Flow:
+ * Step 1: User enters Amazon credentials
+ * Step 2: User enters OTP for verification
+ * Step 3: Display verified payment data with option to claim funds
+ * Step 4: Process the claim transaction and show success/error states
+ * 
+ * The component integrates with:
+ * - TEE API for payment verification
+ * - Smart contract for claiming funds
+ * - Wagmi for blockchain interactions
+ */
+
+const CONTRACT_ADDRESS = "0x6ff44a88ab945e7742bfe16d54ceda4061462f48";
+
+const CONTRACT_ABI = [
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "string",
+            name: "paymentStatusTitle",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "paymentTotalAmount",
+            type: "uint256",
+          },
+          { internalType: "string", name: "receiverUpiId", type: "string" },
+          { internalType: "string", name: "upiTransactionId", type: "string" },
+        ],
+        internalType: "struct IEIP712Verifier.PaymentData",
+        name: "data",
+        type: "tuple",
+      },
+      { internalType: "bytes", name: "signature", type: "bytes" },
+    ],
+    name: "claimFunds",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;
 
 interface VerifyOffchainPaymentButtonProps {
   className?: string;
@@ -32,9 +86,15 @@ export default function VerifyOffchainPaymentButton({
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [result, setResult] = useState<Step2Response | null>(null);
+
+  // Wagmi hooks for contract interaction
+  const { writeContract, data: hash, isPending: isClaimPending, error: claimError } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+  });
 
   function resetState() {
     setUsername("");
@@ -45,6 +105,39 @@ export default function VerifyOffchainPaymentButton({
     setStep(1);
     setSessionId(null);
     setResult(null);
+  }
+
+  async function handleClaimFunds() {
+    if (!result?.transaction || !result?.signature) {
+      setError("Missing transaction data or signature");
+      return;
+    }
+
+    try {
+      setStep(4);
+      setError(null);
+
+      const paymentData = {
+        paymentStatusTitle: result.transaction.paymentStatusTitle,
+        paymentTotalAmount: BigInt(result.transaction.paymentTotalAmount),
+        receiverUpiId: result.transaction.receiverUpiId,
+        upiTransactionId: result.transaction.upiTransactionId,
+      };
+
+      const signature = result.signature.startsWith('0x') 
+        ? result.signature as `0x${string}`
+        : `0x${result.signature}` as `0x${string}`;
+
+      await writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName: "claimFunds",
+        args: [paymentData, signature],
+      });
+    } catch (err) {
+      setError("Failed to claim funds. Please try again.");
+      console.error("Claim funds error:", err);
+    }
   }
 
   function closeModal() {
@@ -278,6 +371,49 @@ export default function VerifyOffchainPaymentButton({
 
                     <div className="flex gap-3">
                       <button onClick={() => { resetState(); setStep(1); }} className="flex-1 btn-outline-coffee">Verify Another</button>
+                      <button onClick={handleClaimFunds} disabled={isClaimPending || isConfirming} className="flex-1 btn-coffee">
+                        {isClaimPending ? "Claiming..." : isConfirming ? "Confirming..." : "Claim Funds"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {step === 4 && (
+                  <div className="space-y-4">
+                    {isConfirmed ? (
+                      <div className="flex items-start gap-2 rounded-lg p-3 text-sm" style={{ color: '#065f46', background: '#d1fae5', border: '1px solid #a7f3d0' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="mt-0.5 h-5 w-5">
+                          <path fillRule="evenodd" d="M2.25 12a9.75 9.75 0 1 1 19.5 0 9.75 9.75 0 0 1-19.5 0Zm13.36-2.59a.75.75 0 1 0-1.06-1.06L10.5 12.34l-1.53-1.53a.75.75 0 0 0-1.06 1.06l2.06 2.06a.75.75 0 0 0 1.06 0l4.62-4.62Z" clipRule="evenodd" />
+                        </svg>
+                        <div>
+                          <div className="font-medium">Funds Claimed Successfully!</div>
+                          <div className="text-xs" style={{ color: 'var(--coffee-muted)' }}>USDC tokens have been transferred to your wallet</div>
+                        </div>
+                      </div>
+                    ) : claimError ? (
+                      <div className="flex items-start gap-2 rounded-lg p-3 text-sm" style={{ color: '#7f1d1d', background: '#fee2e2', border: '1px solid #fecaca' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="mt-0.5 h-5 w-5">
+                          <path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.198 0l6.72 11.634c1.155 2-.289 4.5-2.6 4.5H5.28c-2.311 0-3.755-2.5-2.6-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 12 8.25Zm0 7.5a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" clipRule="evenodd" />
+                        </svg>
+                        <div>
+                          <div className="font-medium">Claim Failed</div>
+                          <div className="text-xs" style={{ color: 'var(--coffee-muted)' }}>{claimError?.message || "Unknown error occurred"}</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2 rounded-lg p-3 text-sm" style={{ color: '#92400e', background: '#fef3c7', border: '1px solid #fde68a' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="mt-0.5 h-5 w-5">
+                          <path fillRule="evenodd" d="M12 1.5a10.5 10.5 0 1 0 0 21 10.5 10.5 0 0 0 0-21ZM9.75 6.75a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1-.75-.75ZM9.75 9.75a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1-.75-.75ZM9.75 12.75a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
+                        </svg>
+                        <div>
+                          <div className="font-medium">Claiming Funds...</div>
+                          <div className="text-xs" style={{ color: 'var(--coffee-muted)' }}>Please wait while we process your claim</div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex gap-3">
+                      <button onClick={() => { resetState(); setStep(1); }} className="flex-1 btn-outline-coffee">Start Over</button>
                       <button onClick={closeModal} className="flex-1 btn-coffee">Close</button>
                     </div>
                   </div>
