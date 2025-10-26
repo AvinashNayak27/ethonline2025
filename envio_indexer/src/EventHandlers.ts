@@ -4,6 +4,7 @@
 import {
   Escrow,
   Escrow_BuyerIntent,
+  Escrow_ClaimedIntent,
   Escrow_FundsDeposited,
   Escrow_FundsWithdrawn,
   Escrow_IntentCancelled,
@@ -67,6 +68,7 @@ Escrow.PaymentClaimed.handler(async ({ event, context }) => {
   const entity: Escrow_PaymentClaimed = {
     id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
     buyer: event.params.buyer,
+    depositId: event.params.depositId,
     usdcAmount: event.params.usdcAmount,
     upiTransactionId: event.params.upiTransactionId,
     transactionHash: event.transaction.hash,
@@ -74,4 +76,16 @@ Escrow.PaymentClaimed.handler(async ({ event, context }) => {
   };
 
   context.Escrow_PaymentClaimed.set(entity);
+});
+
+Escrow.ClaimedIntent.handler(async ({ event, context }) => {
+  const entity: Escrow_ClaimedIntent = {
+    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+    buyer: event.params.buyer,
+    depositId: event.params.depositId,
+    amount: event.params.amount,
+    transactionHash: event.transaction.hash,
+    timestamp: BigInt(event.block.timestamp),
+  };
+  context.Escrow_ClaimedIntent.set(entity);
 });
