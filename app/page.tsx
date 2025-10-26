@@ -8,6 +8,7 @@ import FetchUnifiedBalanceButton from '@/components/fetch-unified-balance-button
 import DeinitButton from '@/components/de-init-button';
 import BridgeAndExecuteButtonComponent from '@/components/bridge-and-execute-button';
 import { isInitialized } from '@/lib/nexus';
+import VerifyOffchainPaymentButton from '@/components/verify-offchain-payment-button';
  
 export default function Page() {
   const { isConnected } = useAccount();
@@ -24,6 +25,7 @@ export default function Page() {
         <ConnectWalletButton className={btn} />
         <InitButton className={btn} onReady={() => setInitialized(true)} />
         <FetchUnifiedBalanceButton className={btn} onResult={(r) => setBalances(r)} />
+        <VerifyOffchainPaymentButton className={btn} />
         
         <div className="border-t pt-4 mt-4 w-full">
           <h3 className="text-lg font-semibold mb-2 text-center">Nexus Core Implementation</h3>
