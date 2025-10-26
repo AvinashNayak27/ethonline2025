@@ -1,4 +1,4 @@
-# Escrow + Offchain Payment System (Arbitrum Mainnet)
+# Escrow + Offchain Payment System (Arbitrum Mainnet) ENvio
 
 This project implements a simple escrow and offchain payment verification system using Solidity smart contracts and EIP-712 signature verification.
 
