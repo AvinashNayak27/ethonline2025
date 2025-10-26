@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { parseUnits } from "viem";
+import BridgePromptModal from "./bridge-prompt-modal";
 
 /**
  * VerifyOffchainPaymentButton Component
@@ -23,7 +24,7 @@ import { parseUnits } from "viem";
  * - Wagmi for blockchain interactions
  */
 
-const CONTRACT_ADDRESS = "0x6ff44a88ab945e7742bfe16d54ceda4061462f48";
+const CONTRACT_ADDRESS = "0x886495c7c0502d948ad4cb3764aeae2293664bb8";
 
 const CONTRACT_ABI = [
   {
@@ -58,6 +59,8 @@ const CONTRACT_ABI = [
 
 interface VerifyOffchainPaymentButtonProps {
   className?: string;
+  onSuccess?: () => void;
+  onBridge?: () => void;
 }
 
 interface Step2TransactionData {
@@ -78,6 +81,8 @@ interface Step2Response {
 
 export default function VerifyOffchainPaymentButton({
   className = "btn-coffee",
+  onSuccess,
+  onBridge,
 }: VerifyOffchainPaymentButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -87,6 +92,8 @@ export default function VerifyOffchainPaymentButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [showBridgePrompt, setShowBridgePrompt] = useState(false);
+  const [claimedAmount, setClaimedAmount] = useState("0");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [result, setResult] = useState<Step2Response | null>(null);
 
@@ -381,13 +388,35 @@ export default function VerifyOffchainPaymentButton({
                 {step === 4 && (
                   <div className="space-y-4">
                     {isConfirmed ? (
-                      <div className="flex items-start gap-2 rounded-lg p-3 text-sm" style={{ color: '#065f46', background: '#d1fae5', border: '1px solid #a7f3d0' }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="mt-0.5 h-5 w-5">
-                          <path fillRule="evenodd" d="M2.25 12a9.75 9.75 0 1 1 19.5 0 9.75 9.75 0 0 1-19.5 0Zm13.36-2.59a.75.75 0 1 0-1.06-1.06L10.5 12.34l-1.53-1.53a.75.75 0 0 0-1.06 1.06l2.06 2.06a.75.75 0 0 0 1.06 0l4.62-4.62Z" clipRule="evenodd" />
-                        </svg>
-                        <div>
-                          <div className="font-medium">Funds Claimed Successfully!</div>
-                          <div className="text-xs" style={{ color: 'var(--coffee-muted)' }}>USDC tokens have been transferred to your wallet</div>
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-2 rounded-lg p-3 text-sm" style={{ color: '#065f46', background: '#d1fae5', border: '1px solid #a7f3d0' }}>
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="mt-0.5 h-5 w-5">
+                            <path fillRule="evenodd" d="M2.25 12a9.75 9.75 0 1 1 19.5 0 9.75 9.75 0 0 1-19.5 0Zm13.36-2.59a.75.75 0 1 0-1.06-1.06L10.5 12.34l-1.53-1.53a.75.75 0 0 0-1.06 1.06l2.06 2.06a.75.75 0 0 0 1.06 0l4.62-4.62Z" clipRule="evenodd" />
+                          </svg>
+                          <div>
+                            <div className="font-medium">Funds Claimed Successfully!</div>
+                            <div className="text-xs" style={{ color: 'var(--coffee-muted)' }}>USDC tokens have been transferred to your wallet</div>
+                          </div>
+                        </div>
+                        <div className="flex gap-3">
+                          <button 
+                            onClick={() => {
+                              setShowBridgePrompt(true);
+                              setClaimedAmount(result?.transaction?.paymentTotalAmount?.toString() || "0");
+                            }}
+                            className="flex-1 btn-coffee"
+                          >
+                            Bridge USDC
+                          </button>
+                          <button 
+                            onClick={() => {
+                              onSuccess?.();
+                              closeModal();
+                            }}
+                            className="flex-1 btn-outline-coffee"
+                          >
+                            Done
+                          </button>
                         </div>
                       </div>
                     ) : claimError ? (
@@ -423,6 +452,21 @@ export default function VerifyOffchainPaymentButton({
           </div>
         </div>
       )}
+
+      {/* Bridge Prompt Modal */}
+      <BridgePromptModal
+        isOpen={showBridgePrompt}
+        onClose={() => setShowBridgePrompt(false)}
+        onBridge={() => {
+          onBridge?.();
+          setShowBridgePrompt(false);
+        }}
+        onSkip={() => {
+          onSuccess?.();
+          setShowBridgePrompt(false);
+        }}
+        claimedAmount={claimedAmount}
+      />
     </>
   );
 }

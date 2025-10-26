@@ -11,7 +11,7 @@ import {
   TOKEN_CONTRACT_ADDRESSES,
 } from "@avail-project/nexus-widgets";
 
-const CONTRACT_ADDRESS = "0x6ff44a88ab945e7742bfe16d54ceda4061462f48";
+const CONTRACT_ADDRESS = "0x886495c7c0502d948ad4cb3764aeae2293664bb8";
 const ARBITRUM_CHAIN_ID = 42161;
 
 const CONTRACT_ABI = [
@@ -386,7 +386,7 @@ export default function BridgeAndExecuteButtonComponent({
   if (!showForm && !showWidget) {
     return (
       <button onClick={() => setShowForm(true)} className={btnClass}>
-        Bridge & Stake
+        + New Deposit
       </button>
     );
   }
@@ -407,7 +407,7 @@ export default function BridgeAndExecuteButtonComponent({
                   <span className="font-black">💰</span>
                 </span>
                 <div>
-                  <h3 className="text-base font-semibold leading-none" style={{ color: 'var(--coffee-espresso)' }}>Bridge & Stake</h3>
+                  <h3 className="text-base font-semibold leading-none" style={{ color: 'var(--coffee-espresso)' }}>New Deposit</h3>
                   <p className="text-xs" style={{ color: 'var(--coffee-muted)' }}>Enter your deposit details</p>
                 </div>
               </div>
@@ -577,7 +577,7 @@ export default function BridgeAndExecuteButtonComponent({
               {({ onClick, isLoading }) => (
                 <div className="space-y-3">
                   <button onClick={onClick} disabled={isLoading} className="w-full btn-coffee">
-                    {isLoading ? "Processing…" : "Bridge & Stake"}
+                    {isLoading ? "Processing…" : "Create Deposit via Nexus"}
                   </button>
                   <button onClick={() => setShowWidget(false)} className="w-full btn-outline-coffee">
                     Back to Edit

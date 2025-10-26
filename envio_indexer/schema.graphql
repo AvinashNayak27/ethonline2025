@@ -1,36 +1,60 @@
-type Escrow_BuyerIntent {
-  id: ID!
-  depositId: BigInt!
-  buyer: String!
-  amount: BigInt!
-}
 
-type Escrow_FundsDeposited {
-  id: ID!
-  depositId: BigInt!
-  seller: String!
-  upiId: String!
-  remainingFunds: BigInt!
-  minimumAmount: BigInt!
-}
 
-type Escrow_FundsWithdrawn {
-  id: ID!
-  seller: String!
-  depositId: BigInt!
-  amount: BigInt!
-}
+  type Escrow_BuyerIntent {
+    id: ID!
+    depositId: BigInt!
+    buyer: String!
+    amount: BigInt!
+    transactionHash: String!
+    timestamp: BigInt!
+  }
+  
+  type Escrow_FundsDeposited {
+    id: ID!
+    depositId: BigInt!
+    seller: String!
+    upiId: String!
+    remainingFunds: BigInt!
+    minimumAmount: BigInt!
+    transactionHash: String!
+    timestamp: BigInt!
+  }
+  
+  type Escrow_FundsWithdrawn {
+    id: ID!
+    seller: String!
+    depositId: BigInt!
+    amount: BigInt!
+    transactionHash: String!
+    timestamp: BigInt!
+  }
+  
+  type Escrow_IntentCancelled {
+    id: ID!
+    buyer: String!
+    depositId: BigInt!
+    transactionHash: String!
+    timestamp: BigInt!
+  }
+  
+  type Escrow_PaymentClaimed {
+    id: ID!
+    buyer: String!
+    depositId: BigInt!            # Added depositId
+    usdcAmount: BigInt!
+    upiTransactionId: String!
+    transactionHash: String!
+    timestamp: BigInt!
+  }
+  
+  type Escrow_ClaimedIntent {       # New event type
+    id: ID!
+    buyer: String!
+    depositId: BigInt!
+    amount: BigInt!
+    transactionHash: String!
+    timestamp: BigInt!
+  }
 
-type Escrow_IntentCancelled {
-  id: ID!
-  buyer: String!
-  depositId: BigInt!
-}
-
-type Escrow_PaymentClaimed {
-  id: ID!
-  buyer: String!
-  usdcAmount: BigInt!
-  upiTransactionId: String!
-}
+  
 

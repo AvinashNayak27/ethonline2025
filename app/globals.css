@@ -65,3 +65,97 @@ body {
 
 .modal-backdrop { background: rgba(47,36,27,0.35); backdrop-filter: blur(2px); }
 .ring-coffee { box-shadow: 0 0 0 3px var(--coffee-ring); }
+
+/* Marketplace specific styles */
+.marketplace-card {
+  @apply rounded-xl border transition-all duration-200;
+  background-color: #ffffff;
+  border-color: var(--color-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.marketplace-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.status-badge {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.status-active {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.status-completed {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.amount-display {
+  @apply text-lg font-semibold;
+  color: var(--coffee-espresso);
+}
+
+.currency-display {
+  @apply text-sm;
+  color: var(--coffee-muted);
+}
+
+/* Loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, var(--coffee-foam) 25%, var(--coffee-latte) 50%, var(--coffee-foam) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Responsive grid */
+.marketplace-grid {
+  @apply grid gap-4;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+@media (max-width: 640px) {
+  .marketplace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tab styles */
+.tab-container {
+  @apply flex gap-1 p-1 rounded-lg;
+  background-color: var(--color-surface);
+}
+
+.tab-button {
+  @apply flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors;
+}
+
+.tab-button.active {
+  background-color: var(--coffee-espresso);
+  color: white;
+}
+
+.tab-button.inactive {
+  color: var(--coffee-muted);
+  background-color: transparent;
+}
+
+.tab-button.inactive:hover {
+  color: var(--coffee-espresso);
+  background-color: var(--coffee-foam);
+}
