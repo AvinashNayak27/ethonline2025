@@ -2,7 +2,7 @@
 name: envio_indexer
 networks:
 - id: 42161
-  start_block: 0
+  start_block: 393579100
   contracts:
   - name: Escrow
     address:
